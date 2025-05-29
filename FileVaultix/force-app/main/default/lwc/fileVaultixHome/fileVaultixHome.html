@@ -1,0 +1,425 @@
+<template>
+  <!-- Enhanced Loader -->
+  <div if:true={isLoading} class="loader-container">
+    <div class="loader-content">
+      <div class="loader-logo">
+        <img src={logoUrl} alt="FileVaultix Logo" />
+      </div>
+      <div class="loader-progress-container">
+        <div class="loader-progress-bar" style={progressBarStyle}></div>
+      </div>
+      <div class="loader-percentage">{loadingPercentage}%</div>
+      <div class="loader-message">{loadingMessage}</div>
+    </div>
+  </div>
+
+  <div class={themeClass} style="width: 100%; overflow-x: hidden;">
+    <!-- Header/Navigation -->
+    <header class={navbarClass}>
+      <div class="container navbar-container">
+        <div class="logo">
+           <img src={logoUrl} alt="FileVaultix Logo" class="logo-icon" />
+          <span>FileVaultix</span>
+        </div>
+        
+        <nav class={menuClass}>
+          <ul class="nav-links">
+            <li><a href="#features" data-section="features" onclick={scrollToSection}>Features</a></li>
+            <li><a href="#how-it-works" data-section="how-it-works" onclick={scrollToSection}>How It Works</a></li>
+            <li><a href="#why-choose" data-section="why-choose" onclick={scrollToSection}>Why Choose Us</a></li>
+            <li><a href="#security" data-section="security" onclick={scrollToSection}>Security</a></li>
+            <li><a href="#faq" data-section="faq" onclick={scrollToSection}>FAQ</a></li>
+          </ul>
+          <div class="nav-actions">
+            <button class="btn btn-outline" onclick={toggleDarkMode}>
+              <template if:true={isDarkMode}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+              </template>
+              <template if:false={isDarkMode}>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+              </template>
+            </button>
+            <button class="btn btn-primary" onclick={handleUploadClick}>Upload File</button>
+          </div>
+        </nav>
+        
+        <button class="menu-toggle" onclick={toggleMenu}>
+          <template if:true={isMenuOpen}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </template>
+          <template if:false={isMenuOpen}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </template>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <!-- 1. Hero Section -->
+      <section class="hero">
+        <div class="video-container">
+          <video autoplay loop muted playsinline onloadeddata={handleVideoLoaded}>
+            <source src={videoBackground} type="video/mp4">
+          </video>
+          <div class="overlay"></div>
+        </div>
+        <div class="container hero-content">
+          <h1 class="hero-title">Secure, Fast & Private File Sharing — Peer to Peer</h1>
+          <p class="hero-subtitle">Transfer files directly between devices with end-to-end encryption. No servers, no storage, no limits.</p>
+          <div class="hero-cta">
+            <button class="btn btn-primary btn-lg" onclick={handleUploadClick}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Upload File
+            </button>
+            <button class="btn btn-outline btn-lg" data-section="how-it-works" onclick={scrollToSection}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 16 16 12 12 8"></polyline>
+                <line x1="8" y1="12" x2="16" y2="12"></line>
+              </svg>
+              Learn More
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. Key Features Section -->
+      <section id="features" class="features">
+        <div class="container">
+          <div class="section-header">
+            <h2>Key Features</h2>
+            <p>Discover why our peer-to-peer file sharing solution stands out from the rest</p>
+          </div>
+          <div class="features-grid">
+            <template for:each={features} for:item="feature">
+              <div key={feature.id} class="feature-card">
+                <div class="feature-icon" lwc:dom="manual"></div>
+                <h3>{feature.title}</h3>
+                <p>{feature.description}</p>
+              </div>
+            </template>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. How It Works Section -->
+      <section id="how-it-works" class="how-it-works">
+        <div class="container">
+          <div class="section-header">
+            <h2>How It Works</h2>
+            <p>Simple, secure file sharing in just a few steps</p>
+          </div>
+          <div class="steps-container">
+            <template for:each={steps} for:item="step">
+              <div key={step.id} class="step-card">
+                <div class="step-number">{step.number}</div>
+                <h3>{step.title}</h3>
+                <p>{step.description}</p>
+              </div>
+            </template>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Why Choose Us Section -->
+      <section id="why-choose" class="why-choose">
+        <div class="container">
+          <div class="section-header">
+            <h2>Why Choose FileVaultix</h2>
+            <p>Our unique approach to file sharing sets us apart</p>
+          </div>
+          <div class="benefits-grid">
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+              </div>
+              <h3>Lightning Fast</h3>
+              <p>Direct peer connections mean your files transfer at the maximum speed your connection allows, without server bottlenecks.</p>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+              </div>
+              <h3>Truly Private</h3>
+              <p>We can't see your files because they never touch our servers. Your data remains exclusively between you and your recipient.</p>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+              </div>
+              <h3>Effortless Sharing</h3>
+              <p>No complicated setup or technical knowledge required. Just drag, drop, and share with anyone, anywhere.</p>
+            </div>
+          </div>
+          
+          <div class="testimonials">
+            <div class="testimonial">
+              <div class="quote">"FileVaultix has revolutionized how our team shares large design files. It's faster and more secure than any cloud storage we've used."</div>
+              <div class="author">— Sarah J., Design Director</div>
+            </div>
+            <div class="testimonial">
+              <div class="quote">"I needed to send sensitive financial documents to my client securely. This service was perfect - no accounts, no storage, just simple secure transfer."</div>
+              <div class="author">— Michael T., Financial Advisor</div>
+            </div>
+          </div>
+          
+          <div class="trust-badges">
+            <div class="badge">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                <path d="M9 12l2 2 4-4"></path>
+              </svg>
+              <span>256-bit Encryption</span>
+            </div>
+            <div class="badge">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                <line x1="1" y1="10" x2="23" y2="10"></line>
+              </svg>
+              <span>No Credit Card</span>
+            </div>
+            <div class="badge">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+              <span>No Tracking</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Security Emphasis Section -->
+      <section id="security" class="security">
+        <div class="container">
+          <div class="section-header">
+            <h2>Security First Approach</h2>
+            <p>Your privacy and data security are our top priorities</p>
+          </div>
+          <div class="security-grid">
+            <div class="security-visual">
+              <div class="security-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shield-icon">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <path d="M9 12l2 2 4-4"></path>
+                </svg>
+              </div>
+            </div>
+            <div class="security-content">
+              <div class="security-feature">
+                <h3>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  End-to-End Encryption
+                </h3>
+                <p>All files are encrypted in your browser before transfer using AES-256 encryption. Only the recipient with the correct link and optional password can decrypt them.</p>
+              </div>
+              <div class="security-feature">
+                <h3>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                  </svg>
+                  Zero Data Retention
+                </h3>
+                <p>We never store your files on our servers. Once the transfer is complete, no copies of your data remain in our system.</p>
+              </div>
+              <div class="security-feature">
+                <h3>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  No Personal Information
+                </h3>
+                <p>We don't require accounts, email addresses, or any personal information to use our service. Your identity remains completely private.</p>
+              </div>
+              <div class="security-feature">
+                <h3>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                  </svg>
+                  Secure WebRTC Protocol
+                </h3>
+                <p>We use the WebRTC protocol for peer-to-peer connections, which includes built-in encryption and security features supported by modern browsers.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. FAQ Section -->
+      <section id="faq" class="faq">
+        <div class="container">
+          <div class="section-header">
+            <h2>Frequently Asked Questions</h2>
+            <p>Find answers to common questions about our service</p>
+          </div>
+          <div class="accordion">
+            <template for:each={faqItemsWithClasses} for:item="item">
+              <div key={item.id} class="accordion-item">
+                <button 
+                  class={item.headerClass}
+                  onclick={toggleAccordion}
+                  data-id={item.id}
+                >
+                  <span>{item.question}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </button>
+                <div class={item.contentClass}>
+                  <p>{item.answer}</p>
+                </div>
+              </div>
+            </template>
+          </div>
+          
+          <div class="tooltip-terms">
+            <p>
+              Learn more about technical terms:
+              <span class="tooltip-container">
+                <a href="javascript:void(0)" class="tooltip-trigger">Peer-to-Peer (P2P)</a>
+                <span class="tooltip-content">
+                  A decentralized communication model where computers can communicate directly without requiring a central server.
+                </span>
+              </span>
+              <span class="tooltip-container">
+                <a href="javascript:void(0)" class="tooltip-trigger">End-to-End Encryption (E2E)</a>
+                <span class="tooltip-content">
+                  A system where only the communicating users can read the messages. Messages are encrypted in a way that only the recipient can decrypt them.
+                </span>
+              </span>
+              <span class="tooltip-container">
+                <a href="javascript:void(0)" class="tooltip-trigger">WebRTC</a>
+                <span class="tooltip-content">
+                  Web Real-Time Communication is an open-source project that provides web browsers with real-time communication via simple APIs.
+                </span>
+              </span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. Call to Action Section -->
+      <section class="cta">
+        <div class="container">
+          <div class="cta-content">
+            <h2>Ready to Share Files Securely?</h2>
+            <p>Start transferring files with complete privacy and security in seconds.</p>
+            <button class="btn btn-primary btn-xl" onclick={handleUploadClick}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              Click to Start Sharing
+            </button>
+            <div class="cta-note">No signup, no installation, no hassle.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- 8. Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <div class="logo">
+               <img src={logoUrl} alt="FileVaultix Logo" class="logo-icon" />
+              <span>FileVaultix</span>
+            </div>
+            <p>Secure peer-to-peer file sharing with end-to-end encryption. No servers, no storage, no tracking.</p>
+          </div>
+          
+          <div class="footer-links">
+            <h3>Links</h3>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#how-it-works">How It Works</a></li>
+              <li><a href="#security">Security</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-links">
+            <h3>Legal</h3>
+            <ul>
+              <li><a href="javascript:void(0)">Privacy Policy</a></li>
+              <li><a href="javascript:void(0)">Terms of Service</a></li>
+              <li><a href="javascript:void(0)">Cookie Policy</a></li>
+              <li><a href="javascript:void(0)">Contact Us</a></li>
+            </ul>
+          </div>
+          
+          <div class="footer-social">
+            <h3>Connect</h3>
+            <div class="social-icons">
+              <a href="https://twitter.com/" aria-label="Twitter">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
+                </svg>
+              </a>
+              <a href="https://facebook.com/" aria-label="Facebook">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                </svg>
+              </a>
+              <a href="https://instagram.com/" aria-label="Instagram">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+              </a>
+              <a href="https://github.com/" aria-label="GitHub">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon">
+                  <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; {currentYear} FileVaultix. All rights reserved.</p>
+          <p class="footer-credit">Designed & developed by <a href="https://saurabhpatil.netlify.app/" target="_blank" rel="noopener">Saurabh Patil</a></p>
+        </div>
+      </div>
+    </footer>
+  </div>
+</template>
