@@ -1,0 +1,1932 @@
+/* ============================= */
+/* 🎨 FileVaultix Modern Theme  */
+/* ============================= */
+
+/* Base Variables */
+:host {
+  /* Color Palette */
+  --primary: #4361ee;
+  --primary-light: #4895ef;
+  --primary-dark: #3a0ca3;
+  --accent: #4cc9f0;
+  --success: #2dd4bf;
+  --warning: #fbbf24;
+  --danger: #f43f5e;
+
+  /* Neutral Colors */
+  --background: #0f172a;
+  --surface: #1e293b;
+  --surface-light: #334155;
+  --surface-dark: #0f172a;
+  --border: #475569;
+
+  /* Text Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+
+  /* Typography */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Border Radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+}
+
+/* 🌐 Global Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary, #4e8cff);
+  border-radius: 8px;
+  min-height: 40px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary, #4e8cff) transparent;
+}
+
+/* ============================= */
+/* 📱 Global Styles            */
+/* ============================= */
+
+.vaultix-container {
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  font-size: 16px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* ============================= */
+/* 🏠 Main Container            */
+/* ============================= */
+
+.vaultix-main {
+  min-height: 100vh;
+  background: var(--background);
+  background-image: radial-gradient(circle at 25% 25%, rgba(67, 97, 238, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(76, 201, 240, 0.05) 0%, transparent 50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.vaultix-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-8) var(--space-4);
+  max-width: 600px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ============================= */
+/* 📤 Upload Box                */
+/* ============================= */
+
+.upload-box {
+  width: 240px;
+  height: 240px;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--border);
+}
+
+.upload-box:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-light);
+}
+
+.upload-box.drag-over {
+  border-color: var(--accent);
+  background-color: rgba(76, 201, 240, 0.1);
+  transform: scale(1.05);
+}
+
+.upload-icon-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vaultix-logo {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  transition: opacity var(--transition-normal);
+}
+
+.upload-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.upload-box:hover .upload-overlay {
+  opacity: 1;
+}
+
+.upload-box:hover .vaultix-logo {
+  opacity: 0.5;
+}
+
+.upload-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-lg);
+}
+
+.upload-arrow {
+  width: 40px;
+  height: 40px;
+  stroke-width: 2;
+}
+
+.file-input {
+  display: none;
+}
+
+/* ============================= */
+/* 📝 Typography                */
+/* ============================= */
+
+.vaultix-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0 0 var(--space-2) 0;
+  background: linear-gradient(to right, var(--primary-light), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.vaultix-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-8);
+  text-align: center;
+}
+
+/* ============================= */
+/* 🔘 Buttons                   */
+/* ============================= */
+
+.vaultix-upload-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  background: var(--surface);
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-8);
+  font-size: 1.125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-md);
+  width: 100%;
+  max-width: 320px;
+  position: relative;
+  overflow: hidden;
+}
+
+.vaultix-upload-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, var(--primary), var(--primary-light));
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  z-index: 0;
+}
+
+.vaultix-upload-btn:hover::before {
+  opacity: 1;
+}
+
+.vaultix-upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.vaultix-upload-btn:active {
+  transform: translateY(0);
+}
+
+.vaultix-upload-btn .btn-icon {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.vaultix-upload-btn span {
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.status-page-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 30%;
+}
+
+/* ============================= */
+/* 📜 Terms                     */
+/* ============================= */
+
+.vaultix-terms {
+  margin-top: var(--space-6);
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.terms-link {
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color var(--transition-fast);
+}
+
+.terms-link:hover {
+  color: var(--primary-light);
+}
+
+/* ============================= */
+/* 👣 Footer                    */
+/* ============================= */
+
+.vaultix-footer {
+  padding: var(--space-6) var(--space-4);
+  background: var(--surface-dark);
+  border-top: 1px solid var(--border);
+}
+
+.footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.footer-content p {
+  margin: 0 0 var(--space-2) 0;
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.footer-credit {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.footer-link {
+  color: var(--primary-light);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+/* ============================= */
+/* 🔍 Popup Overlay             */
+/* ============================= */
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+  overflow-y: auto; /* Allow scrolling on mobile */
+  padding: 1rem 0; /* Add padding to ensure content is visible */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.popup-container {
+  width: 100%;
+  max-width: 500px;
+  margin: var(--space-4);
+  animation: slideUp 0.3s ease;
+  max-height: calc(100vh - 2rem); /* Ensure popup doesn't exceed viewport height */
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.popup-box {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-8);
+  position: relative;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  width: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+}
+
+.close-btn {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  background: var(--surface-light);
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  color: var(--text-secondary);
+  z-index: 10;
+}
+
+.close-btn:hover {
+  background: var(--border);
+  color: var(--text-primary);
+}
+
+.close-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.popup-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0 0 var(--space-6) 0;
+  color: var(--text-primary);
+}
+
+/* ============================= */
+/* 📄 File Info Card            */
+/* ============================= */
+
+.file-info-card {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  background: var(--surface-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.file-icon {
+  width: 48px;
+  height: 48px;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.file-icon svg {
+  width: 28px;
+  height: 28px;
+  color: white;
+}
+
+.file-details {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden; /* Ensure content doesn't overflow */
+}
+
+.file-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-meta {
+  display: flex;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.file-type,
+.file-size {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-type::after {
+  content: "•";
+  margin-left: var(--space-2);
+}
+
+/* File list in confirmation popup */
+.file-list-scroll {
+  max-height: 120px;
+  overflow-y: auto;
+  margin-top: var(--space-2);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: var(--space-2);
+}
+
+.file-list-item-small {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-1) var(--space-2);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.875rem;
+}
+
+.file-list-item-small:last-child {
+  border-bottom: none;
+}
+
+.file-name-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+  color: var(--text-secondary);
+}
+
+.file-size-small {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.file-progress-small {
+  flex: 0 0 auto;
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 0.95em;
+  margin-left: var(--space-2);
+  min-width: 48px;
+  text-align: right;
+}
+
+/* ============================= */
+/* 🔗 Sharing Section           */
+/* ============================= */
+
+.sharing-section {
+  display: flex;
+  gap: var(--space-6);
+  margin-bottom: var(--space-6);
+  flex-wrap: wrap; /* Allow wrapping on small screens */
+}
+
+.qr-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.qr-code {
+  width: 120px;
+  height: 120px;
+  background: white;
+  border-radius: var(--radius-md);
+  padding: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.qr-code img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.qr-label {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.links-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-width: 0; /* Allow flex item to shrink below content size */
+}
+
+.copy-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.copy-field label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.input-with-button {
+  display: flex;
+  align-items: center;
+  background: var(--surface-dark);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: border-color var(--transition-fast);
+}
+
+.input-with-button:focus-within {
+  border-color: var(--primary);
+}
+
+.input-with-button input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.9375rem;
+  min-width: 0;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.input-with-button input:focus {
+  outline: none;
+}
+
+.copy-btn {
+  background: var(--surface-light);
+  border: none;
+  padding: var(--space-2) var(--space-4);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.copy-btn:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.copy-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.icon-check {
+  color: var(--success);
+}
+
+.icon-copy {
+  color: inherit;
+}
+
+/* Direct access link */
+.direct-access {
+  margin-top: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.direct-link {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.direct-link:hover {
+  color: var(--primary-light);
+  text-decoration: underline;
+}
+
+/* ============================= */
+/* ⏰ Expiry Notice             */
+/* ============================= */
+
+.expiry-notice {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-6);
+  color: var(--warning);
+  font-size: 0.9375rem;
+}
+
+.expiry-notice svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.expiry-notice span {
+  flex: 1;
+}
+
+/* ============================= */
+/* 🔄 Connection Status         */
+/* ============================= */
+
+.peer-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+  font-size: 0.9375rem;
+  background: var(--surface-dark);
+  border: 1px solid var(--border);
+  width: 100%;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.peer-status.connected .status-indicator {
+  background: var(--success);
+  animation: pulse 1.5s infinite;
+}
+
+.peer-status.connecting .status-indicator {
+  background: var(--warning);
+  animation: pulse 1.5s infinite;
+}
+
+.peer-status.disconnected .status-indicator {
+  background: var(--text-muted);
+}
+
+.status-text {
+  flex: 1;
+  color: var(--text-secondary);
+}
+
+/* ============================= */
+/* 📊 Transfer Progress          */
+/* ============================= */
+
+.transfer-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.progress-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--primary), var(--accent));
+  transition: width var(--transition-normal);
+}
+
+.progress-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: right;
+}
+
+/* ============================= */
+/* 📋 File List                 */
+/* ============================= */
+
+.file-list-container {
+  margin-bottom: var(--space-6);
+  width: 100%;
+}
+
+.file-list-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--space-4);
+}
+
+.file-list-title svg {
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+}
+
+.file-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 200px;
+  overflow-y: auto;
+  border-radius: var(--radius-md);
+}
+
+.file-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--surface-dark);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  border: 1px solid var(--border);
+  transition: background var(--transition-fast);
+  width: 100%;
+}
+
+.file-list-item:hover {
+  background: var(--surface-light);
+}
+
+.file-list-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.file-list-details {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.file-list-name {
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.9375rem;
+}
+
+.file-list-meta {
+  display: flex;
+  gap: var(--space-2);
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  flex-wrap: wrap;
+}
+
+.file-list-type::after {
+  content: "•";
+  margin-left: var(--space-2);
+}
+
+.file-list-size {
+  white-space: nowrap;
+}
+
+/* File list stopped state */
+.file-list-stopped {
+  background: rgba(244, 63, 94, 0.1);
+  border-color: rgba(244, 63, 94, 0.3);
+}
+
+.file-list-icon-stopped {
+  color: var(--danger);
+}
+
+/* ============================= */
+/* 🎯 Access Details            */
+/* ============================= */
+
+.access-details {
+  background: var(--surface-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  width: 100%;
+}
+
+.access-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+}
+
+.access-title svg {
+  width: 20px;
+  height: 20px;
+  color: var(--success);
+}
+
+.access-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.access-list li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+}
+
+.access-list svg {
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* ============================= */
+/* 📢 Messages                  */
+/* ============================= */
+
+.success-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(45, 212, 191, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  color: var(--success);
+  font-size: 0.9375rem;
+  border: 1px solid rgba(45, 212, 191, 0.3);
+}
+
+.success-message svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.warning-message {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(251, 191, 36, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-6);
+  color: var(--warning);
+  font-size: 0.9375rem;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.warning-message svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ============================= */
+/* 🔘 Action Buttons            */
+/* ============================= */
+
+.action-buttons {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.primary-btn,
+.secondary-btn,
+.delete-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-3) var(--space-6);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  min-width: 120px;
+}
+
+.primary-btn {
+  background: var(--primary);
+  color: white;
+}
+
+.primary-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.secondary-btn {
+  background: var(--surface-light);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.secondary-btn:hover {
+  background: var(--border);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.delete-btn {
+  background: var(--danger);
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* ============================= */
+/* 🔐 Password Section          */
+/* ============================= */
+
+.password-section {
+  margin-bottom: var(--space-6);
+}
+
+.input-label-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.input-label-group label {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.tooltip-container {
+  position: relative;
+}
+
+.help-icon {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast);
+}
+
+.help-icon:hover {
+  color: var(--primary);
+}
+
+.help-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface-dark);
+  color: var(--text-primary);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--transition-fast), visibility var(--transition-fast);
+  z-index: 10;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-1);
+}
+
+.tooltip.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--surface-dark);
+}
+
+.password-input-container {
+  position: relative;
+}
+
+.password-input {
+  width: 100%;
+  background: var(--surface-dark);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: var(--space-3) var(--space-4) var(--space-3) var(--space-12);
+  font-size: 0.9375rem;
+  transition: border-color var(--transition-fast);
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.password-input::placeholder {
+  color: var(--text-muted);
+}
+
+.password-icon {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.password-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.password-eye-btn {
+  position: absolute;
+  right: 2%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 8px;
+  color: var(--text-muted);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-eye-btn:hover .eye-icon {
+  color: var(--primary);
+}
+
+.eye-icon {
+  width: 25px;
+  height: 25px;
+  stroke: currentColor;
+  background: none;
+}
+
+/* ============================= */
+/* 🔄 Toggle Section            */
+/* ============================= */
+
+.toggle-section {
+  margin-bottom: var(--space-6);
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-container input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  background: var(--surface-light);
+  border-radius: var(--radius-full);
+  transition: background var(--transition-normal);
+  flex-shrink: 0;
+}
+
+.toggle-slider::before {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--transition-normal);
+  box-shadow: var(--shadow-sm);
+}
+
+.toggle-container input[type="checkbox"]:checked + .toggle-slider {
+  background: var(--primary);
+}
+
+.toggle-container input[type="checkbox"]:checked + .toggle-slider::before {
+  transform: translateX(20px);
+}
+
+.toggle-label {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+/* ============================= */
+/* ⏳ Loading State             */
+/* ============================= */
+
+.loading-popup {
+  text-align: center;
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.loader-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid var(--surface-light);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loader-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.loader-main-text {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.loader-step-text {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+/* ============================= */
+/* 📜 Terms List                */
+/* ============================= */
+
+.terms-list {
+  list-style: none;
+  margin: 0 0 var(--space-6) 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.terms-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.terms-icon {
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.terms-icon svg {
+  width: 14px;
+  height: 14px;
+  color: white;
+}
+
+.terms-text {
+  flex: 1;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.terms-note {
+  background: rgba(67, 97, 238, 0.1);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-6);
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  border: 1px solid rgba(67, 97, 238, 0.3);
+}
+
+/* ============================= */
+/* ⚠️ Warning Popup             */
+/* ============================= */
+
+.warning-popup {
+  text-align: center;
+}
+
+.warning-popup .popup-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  color: var(--warning);
+}
+
+.warning-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.warning-content {
+  margin-bottom: var(--space-6);
+}
+
+.warning-content p {
+  margin: 0 0 var(--space-2) 0;
+  color: var(--text-secondary);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.warning-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ============================= */
+/* 📱 Status Page               */
+/* ============================= */
+
+/* Download Status Styling */
+.status-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: var(--space-2, 8px);
+  flex-shrink: 0;
+}
+
+.status-complete {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  background: rgba(45, 212, 191, 0.1);
+  border-radius: var(--radius-md, 8px);
+  color: var(--success, #10b981);
+  margin-bottom: var(--space-4, 16px);
+  font-weight: 500;
+  animation: fadeIn 0.3s ease;
+}
+
+.status-downloading {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  background: rgba(67, 97, 238, 0.1);
+  border-radius: var(--radius-md, 8px);
+  color: var(--primary, #4361ee);
+  margin-bottom: var(--space-4, 16px);
+  font-weight: 500;
+}
+
+.status-connected {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  background: rgba(76, 201, 240, 0.1);
+  border-radius: var(--radius-md, 8px);
+  color: var(--accent, #4cc9f0);
+  margin-bottom: var(--space-4, 16px);
+  font-weight: 500;
+}
+
+.status-waiting {
+  display: flex;
+  align-items: center;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  background: var(--surface-dark, #22223b);
+  border-radius: var(--radius-md, 8px);
+  color: var(--text-secondary, #9a8c98);
+  margin-bottom: var(--space-4, 16px);
+  font-weight: 500;
+}
+
+/* Add animation for the downloading status */
+.status-downloading .status-icon {
+  animation: spin 2s linear infinite;
+}
+
+/* Add animation for the complete status */
+.status-complete .status-icon {
+  color: var(--success, #10b981);
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ============================= */
+/* 📱 File Sharing Details      */
+/* ============================= */
+
+.file-sharing-details {
+  width: 100%;
+  max-width: 600px;
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  margin-bottom: var(--space-8);
+}
+
+/* ============================= */
+/* 📱 Mobile Responsive         */
+/* ============================= */
+
+@media (max-width: 768px) {
+  .vaultix-center {
+    padding: var(--space-4);
+  }
+
+  .vaultix-title {
+    font-size: 2.5rem;
+  }
+
+  .vaultix-subtitle {
+    font-size: 1.125rem;
+  }
+
+  .upload-box {
+    width: 200px;
+    height: 200px;
+  }
+
+  .sharing-section {
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: center;
+  }
+
+  .qr-section {
+    order: -1;
+  }
+
+  .file-list-container {
+    max-height: 150px;
+    overflow-y: auto;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .primary-btn,
+  .secondary-btn,
+  .delete-btn {
+    width: 100%;
+  }
+
+  .popup-container {
+    margin: var(--space-2);
+    max-width: calc(100% - var(--space-4));
+  }
+
+  .popup-box {
+    padding: var(--space-6) var(--space-4);
+    overflow-y: auto;
+  }
+
+  .file-sharing-details {
+    padding: var(--space-6) var(--space-4);
+  }
+  
+  /* Improve file list in popup */
+  .file-list-scroll {
+    max-height: 100px;
+  }
+  
+  /* Make password field more mobile-friendly */
+  .password-input {
+    padding-right: 40px; /* Make room for the eye icon */
+  }
+  
+  .toggle-label {
+    margin-top: var(--space-2);
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .vaultix-title {
+    font-size: 2rem;
+  }
+
+  .upload-box {
+    width: 180px;
+    height: 180px;
+  }
+
+  .file-info-card {
+    text-align: center;
+    gap: var(--space-3);
+  }
+
+  .file-icon {
+    align-self: center;
+  }
+
+  .copy-field {
+    gap: var(--space-1);
+  }
+
+  /* Keep input and button on same line but make button smaller */
+  .input-with-button {
+    flex-direction: row;
+  }
+
+  .copy-btn {
+    padding: var(--space-2);
+  }
+  
+  /* Make popup more compact */
+  .popup-box {
+    padding: var(--space-4) var(--space-3);
+  }
+  
+  .popup-title {
+    font-size: 1.25rem;
+    margin-bottom: var(--space-4);
+  }
+  
+  /* Ensure file list items don't overflow */
+  .file-list-item {
+    padding: var(--space-2);
+  }
+  
+  .file-list-name {
+    max-width: 200px;
+  }
+  
+  /* Make password field more compact */
+  .password-input-container {
+    margin-bottom: var(--space-2);
+  }
+  
+  .password-input {
+    font-size: 0.875rem;
+  }
+  
+  /* Adjust tooltip position */
+  .tooltip {
+    width: 200px;
+    white-space: normal;
+    text-align: center;
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+  
+  .tooltip::after {
+    left: auto;
+    right: 10px;
+  }
+}
+
+/* ============================= */
+/* 🎨 Browser Compatibility     */
+/* ============================= */
+
+/* Browser compatibility indicator */
+.browser-compatibility {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-md);
+  background: rgba(251, 191, 36, 0.1);
+  color: var(--warning);
+  font-size: 0.875rem;
+  margin-top: var(--space-4);
+  border: 1px solid rgba(251, 191, 36, 0.3);
+}
+
+.browser-compatibility svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ============================= */
+/* 🎭 Enhanced Animations       */
+/* ============================= */
+
+/* Fade animations */
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease forwards;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Slide animations */
+.slide-up {
+  animation: slideUp 0.3s ease forwards;
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease forwards;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+/* Pulse animation for connection indicators */
+.pulse {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+}
+
+/* ============================= */
+/* 🔧 Utility Classes           */
+/* ============================= */
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: var(--space-2);
+}
+
+.gap-4 {
+  gap: var(--space-4);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+.rounded {
+  border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.shadow {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================= */
+/* 🎯 Focus States              */
+/* ============================= */
+
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.upload-box:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+/* ============================= */
+/* 🌙 Dark Mode Enhancements    */
+/* ============================= */
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    color-scheme: dark;
+  }
+}
+
+/* ============================= */
+/* 🎨 Print Styles              */
+/* ============================= */
+
+@media print {
+  .popup-overlay,
+  .vaultix-footer,
+  .action-buttons {
+    display: none !important;
+  }
+
+  .vaultix-main {
+    background: white !important;
+    color: black !important;
+  }
+
+  .file-sharing-details {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* ============================= */
+/* 🔄 Reduced Motion            */
+/* ============================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .loader-spinner {
+    animation: none;
+    border: 4px solid var(--surface-light);
+    border-top: 4px solid var(--primary);
+  }
+
+  .pulse {
+    animation: none;
+  }
+}
