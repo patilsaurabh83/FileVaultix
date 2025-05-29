@@ -14,15 +14,24 @@ FileVaultix is a Salesforce-powered web application that enables secure, encrypt
 
 ## 🚀 Features
 
-✨ **Peer-to-Peer Transfers** – Direct and secure file delivery via WebRTC.
-🔐 **End-to-End Encryption** – Military-grade encryption via WebRTC DTLS/SRTP.
-📄️ **No Server Storage** – Files never touch any backend server.
-🧑‍🚀 **Zero Signup Hassle** – Start instantly with no authentication.
-📁 **Large File Support** – Share files up to **10GB** (browser/network limits apply).
-📱 **Responsive UI** – Built using Lightning Web Components, mobile-ready.
-💣 **Session-based Sharing** – Files are destroyed once the session ends.
-📌 **QR Code & Link Sharing** – Share peer links easily via QR or URL.
+✨ **Peer-to-Peer Transfers** – Direct and secure file delivery via WebRTC.  
+🔐 **End-to-End Encryption** – Military-grade encryption via WebRTC DTLS/SRTP.  
+📄️ **No Server Storage** – Files never touch any backend server.  
+🧑‍🚀 **Zero Signup Hassle** – Start instantly with no authentication.  
+📁 **Large File Support** – Share files up to **10GB** (browser/network limits apply).  
+📱 **Responsive UI** – Built using Lightning Web Components, mobile-ready.  
+💣 **Session-based Sharing** – Files are destroyed once the session ends.  
+📌 **QR Code & Link Sharing** – Share peer links easily via QR or URL.  
 🌐 **Modern Architecture** – Real-time communication with zero intermediary.
+
+
+---
+
+## 🏠 Home Screenshot:
+
+<p align="center">
+  <img src="/File Vaultix Home.png" alt="FileVaultix Home Screenshot"/>
+</p>
 
 ---
 
@@ -47,6 +56,13 @@ FileVaultix/
 ├── README.md
 └── ...
 ```
+
+---
+
+## 🏠 Live Demo
+
+Try FileVaultix live and experience secure peer-to-peer file sharing:  
+🔗 [FileVaultix Live](https://innovativewizards-dev-ed.develop.my.site.com/)
 
 ---
 
