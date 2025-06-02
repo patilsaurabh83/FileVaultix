@@ -5,10 +5,17 @@
 FileVaultix is a Salesforce-powered web application that enables secure, encrypted, and direct file transfers using **WebRTC** and **PeerJS**—no files are stored on any server and no accounts are needed. Perfect for privacy-conscious users, FileVaultix ensures your files reach the recipient **only** and **directly**.
 
 <p align="center">
-  <img src="https://img.shields.io/github/license/patilsaurabh83/FileVaultix" alt="License">
-  <img src="https://img.shields.io/github/repo-size/patilsaurabh83/FileVaultix" alt="Repo Size">
-  <img src="https://img.shields.io/github/languages/top/patilsaurabh83/FileVaultix" alt="Top Language">
+  <img src="https://img.shields.io/github/license/patilsaurabh83/FileVaultix" alt="License" />
+  <img src="https://img.shields.io/github/repo-size/patilsaurabh83/FileVaultix" alt="Repo Size" />
+  <img src="https://img.shields.io/github/languages/top/patilsaurabh83/FileVaultix" alt="Top Language" />
+  <img src="https://img.shields.io/github/issues-closed/patilsaurabh83/FileVaultix" alt="Closed Issues" />
+  <img src="https://img.shields.io/github/issues-pr-closed/patilsaurabh83/FileVaultix" alt="Closed PRs" />
+  <img src="https://img.shields.io/github/stars/patilsaurabh83/FileVaultix?style=social" alt="GitHub stars" />
+  <img src="https://img.shields.io/github/forks/patilsaurabh83/FileVaultix" alt="GitHub forks" />
+  <img src="https://img.shields.io/github/last-commit/patilsaurabh83/FileVaultix" alt="Last Commit" />
+  <img src="https://img.shields.io/github/contributors/patilsaurabh83/FileVaultix" alt="Contributors" />
 </p>
+
 
 ---
 
