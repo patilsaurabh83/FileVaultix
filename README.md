@@ -38,16 +38,21 @@ FileVaultix is a Salesforce-powered web application that enables secure, encrypt
 ## 🏗️ Project Architecture
 
 ```bash
+
 FileVaultix/
 ├── force-app/
 │   └── main/
 │       └── default/
 │           ├── lwc/
-│           │   ├── fileVaultixHome/       # Project landing & intro UI
-│           │   ├── fileVaultixUpload/     # Upload page (Sender view)
-│           │   └── fileVaultixDownload/   # Download page (Receiver view)
+│           │   ├── fileVaultixHome/          # Project landing & intro UI
+│           │   ├── fileVaultixUpload/        # Upload page (Sender view)
+│           │   └── fileVaultixDownload/      # Download page (Receiver view)
 │           └── classes/
-│               └── FileUploadController.cls  # Apex logic for session/control
+│               ├── FileUploadController.cls              # Apex logic for session/control
+│               ├── WebRTCSessionAutoCloseBatch.cls       # Batch: Closes stale sessions
+│               ├── WebRTCSessionAutoCloseScheduler.cls   # Scheduler: Runs every 4 hours
+│               ├── WebRTCCleanupBatch.cls                # Batch: Deletes old closed sessions
+│               └── WebRTCCleanupScheduler.cls            # Scheduler: Runs end of each month
 │
 ├── config/
 │   └── project-scratch-def.json
@@ -55,6 +60,7 @@ FileVaultix/
 │   └── package.xml
 ├── README.md
 └── ...
+
 ```
 
 ---
@@ -87,25 +93,63 @@ All session records are temporary and **never** used to store actual files or pe
 
 ---
 
-### 🧹 Automated Cleanup: WebRTC Session Batch
+---
 
-FileVaultix includes a scheduled batch job to ensure data privacy and session cleanup:
+## 🧹 Automated Cleanup: WebRTC Session Maintenance
 
-**Class:** `WebRTCCleanupBatch.cls`
-**Location:** `force-app/main/default/classes/WebRTCCleanupBatch.cls`
+FileVaultix includes scheduled Apex jobs to ensure session cleanup, security, and data hygiene:
 
-#### ✅ What it Does:
+---
 
-* Finds `WebRTC_Session__c` records with `Session_Status__c = 'Closed'` and older than 45 days.
-* Deletes them in efficient batches.
-* Sends a summary email to operations for transparency.
+### ✅ `WebRTCSessionAutoCloseBatch.cls`
 
-#### ⏳ How it Runs:
+**Purpose:**  
+Automatically closes `WebRTC_Session__c` records that have been **In Progress** for more than **4 hours**—ideal for cleaning up stale or abandoned sharing sessions.
 
-* Can be scheduled to run monthly or triggered manually.
-* Keeps your Salesforce org tidy and privacy-compliant.
+| Task   | Description                                                    |
+|--------|----------------------------------------------------------------|
+| 🎯 Target | Sessions with `Session_Status__c = 'In Progress'` older than 4 hours |
+| 🔁 Action | Updates `Session_Status__c` to `Closed`                           |
+| 🕐 Frequency | Every 4 hours via scheduler                                   |
 
-> ⚠️ **Note:** No user files are stored—only encrypted metadata is temporarily persisted and auto-purged.
+---
+
+### 📅 `WebRTCSessionAutoCloseScheduler.cls`
+
+**Purpose:**  
+Schedules the `WebRTCSessionAutoCloseBatch` to run automatically every **4 hours**.
+
+| Task        | Description                                          |
+|-------------|------------------------------------------------------|
+| ⏱ Schedule | Cron-based execution every 4 hours                  |
+| 🔄 Automation | Ensures abandoned sessions are closed automatically |
+
+---
+
+### 🗑️ `WebRTCCleanupBatch.cls`
+
+**Purpose:**  
+Deletes old `WebRTC_Session__c` records that have already been closed for **more than 45 days**.
+
+| Task   | Description                                               |
+|--------|-----------------------------------------------------------|
+| 🗃️ Target | Records with `Session_Status__c = 'Closed'` and older than 45 days |
+| ❌ Action | Deletes them in efficient batches                      |
+| 📧 Email | Sends summary email upon completion                    |
+
+---
+
+### 📆 `WebRTCCleanupScheduler.cls`
+
+**Purpose:**  
+Schedules the `WebRTCCleanupBatch` to run at the **end of every month** automatically.
+
+| Task       | Description                                                |
+|------------|------------------------------------------------------------|
+| 📅 Schedule | Monthly execution (customizable via cron expression)      |
+| 🧹 Purpose  | Keeps Salesforce org tidy by regularly purging old sessions |
+
+> ⚠️ **Note:** No user files are stored—only encrypted session metadata is temporarily persisted and auto-managed by these jobs.
 
 ---
 
