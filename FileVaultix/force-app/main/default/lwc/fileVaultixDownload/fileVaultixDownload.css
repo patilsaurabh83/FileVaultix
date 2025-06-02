@@ -1972,6 +1972,10 @@
     padding: var(--space-3) var(--space-6);
   }
 
+  .status-text{
+    font-size: 13px;
+  }
+
   .popup-title {
     font-size: 1.25rem;
   }

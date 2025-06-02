@@ -3,6 +3,7 @@ import fileVaultixLogo from "@salesforce/resourceUrl/fileVaultixLogo"
 import saveWebRTCSession from "@salesforce/apex/FileUploadController.saveWebRTCSession"
 import checkAndGenerateUniqueToken from "@salesforce/apex/FileUploadController.generateUniqueToken"
 import updateSessionStatus from "@salesforce/apex/FileUploadController.updateSessionStatus"
+import updateFileAccessStatus from '@salesforce/apex/FileUploadController.updateFileAccessStatus';
 
 import ExpressTurn1_Password from '@salesforce/label/c.ExpressTurn1';
 import ExpressTurn2_Password from '@salesforce/label/c.ExpressTurn2_Password';
@@ -107,6 +108,9 @@ export default class FileVaultixUpload extends LightningElement {
   @track loadingMessage = ""
   fileVaultixLogo = fileVaultixLogo
 
+  // Track if user left and returned
+  tabChangedWhileDownloading = false;
+
   // Format file size to human-readable format
   formatFileSize(bytes) {
     if (bytes === 0) return "0 Bytes"
@@ -137,6 +141,11 @@ export default class FileVaultixUpload extends LightningElement {
 
     // Set up beforeunload event to warn user before refreshing
     window.addEventListener("beforeunload", this.handleBeforeUnload.bind(this))
+
+    window.addEventListener("unload", this.handleWindowUnload.bind(this));
+
+    //Event listener for visibility change
+    document.addEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
   }
 
   disconnectedCallback() {
@@ -152,6 +161,8 @@ export default class FileVaultixUpload extends LightningElement {
     // Remove event listener
     this.updateSessionStatus('closed');
     window.removeEventListener("beforeunload", this.handleBeforeUnload.bind(this))
+    window.removeEventListener("unload", this.handleWindowUnload.bind(this));
+    document.removeEventListener("visibilitychange", this.handleVisibilityChange.bind(this));
   }
 
   logWithStyle(message) {
@@ -183,7 +194,6 @@ export default class FileVaultixUpload extends LightningElement {
         resolve()
       }
       script.onerror = () => {
-        console.error("❌ Failed to load PeerJS")
         reject(new Error("Failed to load PeerJS"))
       }
       document.head.appendChild(script)
@@ -191,8 +201,7 @@ export default class FileVaultixUpload extends LightningElement {
   }
 
   getIceServerList() {
-    //console.log("🔄 Fetching ICE server list..." + ExpressTurn1_Password);
-
+    // List of ExpressTURN users with their credentials
     const expressTurnUsers = [
       { username: '174833251619584710', credential: ExpressTurn1_Password },
       { username: '174831896813471639', credential: ExpressTurn2_Password },
@@ -258,6 +267,37 @@ export default class FileVaultixUpload extends LightningElement {
       event.preventDefault()
       event.returnValue = ""
       return ""
+    }
+  }
+
+  handleWindowUnload() {
+    // Notify downloader if connection is open
+    if (this.connection && this.connection.open) {
+      try {
+        this.connection.send({ type: "uploader_left" });
+      } catch (e) { }
+      // Close the connection
+      this.connection.close();
+    }
+  }
+
+  handleVisibilityChange() {
+    // Only care if download is in progress and connection is open
+    if (this.isSendingChunks && this.connection && this.connection.open) {
+      if (document.visibilityState === "hidden") {
+        // User left the tab
+        this.tabChangedWhileDownloading = true;
+        // Notify downloader
+        this.connection.send({ type: "uploader_tab_changed" });
+      } else if (document.visibilityState === "visible" && this.tabChangedWhileDownloading) {
+        // User returned to tab
+        this.showCustomToast(
+          "Stay on this tab",
+          "For better download speed, please keep FileVaultix in the foreground.",
+          "info"
+        );
+        this.tabChangedWhileDownloading = false;
+      }
     }
   }
 
@@ -681,7 +721,7 @@ export default class FileVaultixUpload extends LightningElement {
   // Show error message
   showError(message) {
     this.showCustomToast("Error", message, "error")
-    console.error(message)
+
   }
 
   // Initialize PeerJS connection with enhanced configuration
@@ -718,7 +758,7 @@ export default class FileVaultixUpload extends LightningElement {
       // Wait for peer to be ready
       return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
-          console.error("❌ PeerJS connection timeout")
+
           reject(new Error("PeerJS connection timeout"))
         }, 30000) // 30 second timeout
 
@@ -739,13 +779,13 @@ export default class FileVaultixUpload extends LightningElement {
 
         this.peer.on("error", (error) => {
           clearTimeout(timeout)
-          console.error("❌ PeerJS error:", error)
+
           this.showCustomToast("Connection Error", `PeerJS error: ${error.message}`, "error")
           reject(error)
         })
       })
     } catch (error) {
-      console.error("❌ PeerJS initialization error:", error)
+
       this.showCustomToast("Connection Error", "Failed to initialize PeerJS connection. Please try again.", "error")
       this.connectionStatus = "failed"
       return false
@@ -763,7 +803,7 @@ export default class FileVaultixUpload extends LightningElement {
 
     // Handle disconnection
     this.peer.on("disconnected", () => {
-      console.warn("⚠️ PeerJS disconnected from server")
+      //console.warn("⚠️ PeerJS disconnected from server")
       this.stopSharing();
       this.connectionStatus = "disconnected"
       this.showCustomToast("Connection Lost", "Disconnected from PeerJS server", "warning")
@@ -777,7 +817,7 @@ export default class FileVaultixUpload extends LightningElement {
 
     // Handle errors
     this.peer.on("error", (error) => {
-      console.error("❌ PeerJS error:", error)
+
       this.handlePeerJSError(error)
     })
   }
@@ -847,7 +887,7 @@ export default class FileVaultixUpload extends LightningElement {
 
     // Handle connection errors
     this.connection.on("error", (error) => {
-      console.error("❌ Data connection error:", error)
+
       this.connectionStatus = "disconnected"
       this.showCustomToast("Data Connection Error", "An error occurred with the data connection", "error")
     })
@@ -857,7 +897,7 @@ export default class FileVaultixUpload extends LightningElement {
       try {
         this.handleConnectionMessage(data)
       } catch (error) {
-        console.error("❌ Error processing message:", error)
+
       }
     })
   }
@@ -874,6 +914,8 @@ export default class FileVaultixUpload extends LightningElement {
       case "file_received":
         // Peer has successfully received the file
         this.handleFileAccessed(data.clientInfo)
+        // Update status to "Files Accessed"
+        this.updateFileAccessStatusSilently("Files Accessed");
         break
       case "chunk_received":
         // Peer has received a chunk, send the next one
@@ -886,6 +928,9 @@ export default class FileVaultixUpload extends LightningElement {
       case "download_complete":
         // Download is complete
         this.downloadComplete = true
+        this.isSendingChunks = false; 
+        // Update status to "Files Downloaded"
+        this.updateFileAccessStatusSilently("Files Downloaded");
         this.showCustomToast("Download Complete", "Files have been downloaded successfully", "success")
         break
       case "request_next_file":
@@ -915,12 +960,17 @@ export default class FileVaultixUpload extends LightningElement {
       case "download_started":
 
         this.isSendingChunks = true; // your flag set here
+        this.updateFileAccessStatusSilently("File Downloading Started");
         break;
       case 'downloader_lost_connection':
         this.stopSharing();
         this.showCustomToast("Connection Lost", "The downloader has lost connection. Stopping file transfer.", "warning");
+        break;
+      case "downloader_left":
+        this.showCustomToast("Downloader Left", "The downloader has closed their window. You can close this window if the download is done.", "warning");
+        break;
       default:
-        console.warn("Unknown message type:", data.type)
+        //console.warn("Unknown message type:", data.type)
     }
   }
 
@@ -936,10 +986,6 @@ export default class FileVaultixUpload extends LightningElement {
           lastModified: file.lastModified,
         })),
       })
-      console.log(
-        "📤 Sent file list to peer:",
-        this.uploadedFiles.map((f) => f.name),
-      )
     }
   }
 
@@ -977,7 +1023,7 @@ export default class FileVaultixUpload extends LightningElement {
   // Send file via PeerJS data connection
   async sendFileViaPeer() {
     if (!this.connection || !this.connection.open) {
-      console.error("❌ Cannot send file: connection not open")
+
       return
     }
 
@@ -990,7 +1036,7 @@ export default class FileVaultixUpload extends LightningElement {
     try {
       const currentFile = this.uploadedFiles[this.currentFileIndex]
       if (!currentFile) {
-        console.error("❌ No file to send at index:", this.currentFileIndex)
+
         return
       }
 
@@ -1032,7 +1078,7 @@ export default class FileVaultixUpload extends LightningElement {
       // Start sending chunks
       this.readAndSendChunk()
     } catch (error) {
-      console.error("❌ Error sending file:", error)
+
       this.transferInProgress = false
       this.showCustomToast("Error", `Error sending file: ${error.message}`, "error")
     }
@@ -1041,13 +1087,11 @@ export default class FileVaultixUpload extends LightningElement {
   // Read and send file chunk with proper partial chunk handling
   readAndSendChunk() {
     if (this.currentFileIndex >= this.uploadedFiles.length) {
-      console.error("❌ Invalid file index:", this.currentFileIndex)
       return
     }
 
     const file = this.uploadedFiles[this.currentFileIndex]
     if (!file || !this.connection || !this.connection.open) {
-      console.error("❌ Cannot send chunk: file or connection not available")
       return
     }
 
@@ -1060,10 +1104,6 @@ export default class FileVaultixUpload extends LightningElement {
     const start = this.currentChunk * this.chunkSize
     const end = Math.min(start + this.chunkSize, file.size)
     const chunk = file.slice(start, end)
-
-    console.log(
-      `📤 Reading chunk ${this.currentChunk + 1}/${this.totalChunks}: bytes ${start}-${end - 1} (${end - start} bytes)`,
-    )
 
     const reader = new FileReader()
 
@@ -1095,14 +1135,14 @@ export default class FileVaultixUpload extends LightningElement {
         this.setAckTimeout();
 
       } catch (err) {
-        console.error("❌ Error sending chunk:", err)
+
         this.showCustomToast("Error", `Error sending chunk: ${err.message}`, "error")
         this.pendingAck = false;
       }
     }
 
     reader.onerror = (e) => {
-      console.error("❌ File read error:", e)
+
       this.showCustomToast("Error", `File read error: ${e.message}`, "error")
       this.pendingAck = false;
     }
@@ -1233,11 +1273,11 @@ export default class FileVaultixUpload extends LightningElement {
       }
 
       this.broadcast.onerror = (error) => {
-        console.error("❌ Broadcast channel error:", error)
+
         this.showCustomToast("Communication Error", "Lost communication with uploader", "warning")
       }
     } catch (error) {
-      console.error("❌ Failed to create broadcast channel:", error)
+
     }
   }
 
@@ -1289,7 +1329,7 @@ export default class FileVaultixUpload extends LightningElement {
         this.showMainUploadPage = true
       }
     } else {
-      console.error("Access token is null or invalid.")
+
       this.showCustomToast("Error", "Access token is null or invalid.", "error")
     }
   }
@@ -1328,6 +1368,8 @@ export default class FileVaultixUpload extends LightningElement {
         this.transferInProgress = false;
         this.transferProgress = 0
         this.password = ""
+        this.singleUseOnly = false
+        this.isSendingChunks = false; // Reset sending chunks flag
 
 
         setTimeout(() => {
@@ -1360,7 +1402,7 @@ export default class FileVaultixUpload extends LightningElement {
       try {
         this.connection.close()
       } catch (e) {
-        console.error("Error closing connection:", e)
+
       }
       this.connection = null
     }
@@ -1369,7 +1411,7 @@ export default class FileVaultixUpload extends LightningElement {
       try {
         this.peer.destroy()
       } catch (e) {
-        console.error("Error destroying peer:", e)
+
       }
       this.peer = null
     }
@@ -1378,7 +1420,7 @@ export default class FileVaultixUpload extends LightningElement {
     this.connectionStatus = "disconnected"
     localStorage.removeItem("uploadingDevice");
   }
-  
+
 
   // Generate access token and URL
   async generateAccessInfo() {
@@ -1391,7 +1433,7 @@ export default class FileVaultixUpload extends LightningElement {
         accessToken = result
 
       } else {
-        console.error("Error generating unique token: result invalid or empty")
+
         return false
       }
 
@@ -1418,7 +1460,7 @@ export default class FileVaultixUpload extends LightningElement {
       await this.saveSessionToSalesforce()
       return true
     } catch (error) {
-      console.error("❌ Error generating access info:", error)
+
       this.showCustomToast("Error", `Error generating access info: ${error.message}`, "error")
       return false
     }
@@ -1438,15 +1480,36 @@ export default class FileVaultixUpload extends LightningElement {
       const password = parsed.password || ""
       const sessionJson = sessionData
 
-      const result = await saveWebRTCSession({ peerId, token, password, sessionJson })
+      // Build fileNames string: "filename1 (1.2 MB), filename2 (500 KB)"
+      const fileNames = this.uploadedFiles
+        .map(f => `${f.name} (${this.formatFileSize(f.size)})`)
+        .join('\n');
+
+
+      const fileAccessStatus = "Files Shared"; // Initial status
+
+      const result = await saveWebRTCSession({
+        peerId,
+        token,
+        password,
+        sessionJson,
+        fileNames,
+        fileAccessStatus
+      })
 
       sessionStorage.setItem("webrtcRecordId", result)
-      // Set localStorage flag to prevent download on same device
       localStorage.setItem("uploadingDevice", "true")
     } catch (error) {
-      console.error("❌ Error saving session to Salesforce:", error)
+
       this.showCustomToast("Error", "Failed to save session to Salesforce.", "error")
     }
+  }
+
+  updateFileAccessStatusSilently(newStatus) {
+    const recordId = sessionStorage.getItem("webrtcRecordId");
+    if (!recordId) return;
+    // Fire and forget, no await, no error handling
+    updateFileAccessStatus({ recordId, newStatus });
   }
 
   // Get browser information
@@ -1488,7 +1551,7 @@ export default class FileVaultixUpload extends LightningElement {
           }, 1500)
         })
         .catch((err) => {
-          console.error("Failed to copy: ", err)
+
           this.showCustomToast("Error", `Failed to copy: ${err.message}`, "error")
         })
     }
@@ -1507,7 +1570,7 @@ export default class FileVaultixUpload extends LightningElement {
           }, 1500)
         })
         .catch((err) => {
-          console.error("Failed to copy: ", err)
+
           this.showCustomToast("Error", `Failed to copy: ${err.message}`, "error")
         })
     }
@@ -1541,7 +1604,7 @@ export default class FileVaultixUpload extends LightningElement {
         })
 
       } catch (error) {
-        console.error("❌ Error updating session status:", error)
+
       }
     }
   }
@@ -1714,4 +1777,5 @@ export default class FileVaultixUpload extends LightningElement {
       ? 'Enter a passkey for files'
       : 'Enter a password to protect your files';
   }
+
 }

@@ -180,7 +180,7 @@ export default class FileVaultixDownload extends LightningElement {
       this.iceServerList = list;
 
     } catch (error) {
-      console.error("❌ Critical error in connectedCallback:", error)
+
       this.showError(
         "Failed to initialize the download page. Please refresh and try again.",
         "generic",
@@ -195,7 +195,6 @@ export default class FileVaultixDownload extends LightningElement {
     this.closeConnection()
     this.clearAllTimers()
     this.removeEventListeners()
-    this.updateSessionStatusOnExit()
   }
 
   logWithStyle(message) {
@@ -227,7 +226,7 @@ export default class FileVaultixDownload extends LightningElement {
         resolve()
       }
       script.onerror = () => {
-        console.error("❌ Failed to load PeerJS")
+
         reject(new Error("Failed to load PeerJS"))
       }
       document.head.appendChild(script)
@@ -379,7 +378,7 @@ export default class FileVaultixDownload extends LightningElement {
           }
         } catch (error) {
           this.isLoading = false
-          console.error("❌ Error during initial token processing:", error)
+
           this.showError(
             "Failed to validate access token.",
             "auth",
@@ -409,6 +408,7 @@ export default class FileVaultixDownload extends LightningElement {
     window.addEventListener("beforeunload", this.handleBeforeUnload.bind(this))
     window.addEventListener("online", this.handleOnlineStatus.bind(this))
     window.addEventListener("offline", this.handleOfflineStatus.bind(this))
+    window.addEventListener("unload", this.handleWindowUnload.bind(this));
   }
 
   // Remove event listeners
@@ -417,6 +417,7 @@ export default class FileVaultixDownload extends LightningElement {
     window.removeEventListener("beforeunload", this.handleBeforeUnload.bind(this))
     window.removeEventListener("online", this.handleOnlineStatus.bind(this))
     window.removeEventListener("offline", this.handleOfflineStatus.bind(this))
+    window.removeEventListener("unload", this.handleWindowUnload.bind(this));
   }
 
   // Handle page visibility changes
@@ -680,7 +681,7 @@ export default class FileVaultixDownload extends LightningElement {
         return false
       }
     } catch (error) {
-      console.error(`❌ Error fetching session data (attempt ${retryCount + 1}):`, error)
+
 
       if (retryCount < maxRetries) {
 
@@ -709,6 +710,15 @@ export default class FileVaultixDownload extends LightningElement {
     }
   }
 
+  handleWindowUnload() {
+    // Notify uploader if connection is open
+    if (this.connection && this.connection.open) {
+      try {
+        this.connection.send({ type: "downloader_left" });
+      } catch (e) { }
+    }
+  }
+
   // Cancel page refresh
   cancelRefresh() {
     this.showRefreshWarning = false
@@ -734,7 +744,7 @@ export default class FileVaultixDownload extends LightningElement {
           status: "Closed",
         })
       } catch (error) {
-        console.error("❌ Error updating session status on exit:", error)
+
       }
     }
   }
@@ -748,13 +758,13 @@ export default class FileVaultixDownload extends LightningElement {
       const parsed = JSON.parse(data)
 
       if (!parsed.token || !parsed.peerId) {
-        console.warn("⚠️ Invalid session data structure")
+        //console.warn("⚠️ Invalid session data structure")
         return null
       }
 
       return parsed
     } catch (error) {
-      console.error("❌ Error parsing session data:", error)
+
       return null
     }
   }
@@ -815,7 +825,7 @@ export default class FileVaultixDownload extends LightningElement {
         await this.processToken(false)
       }
     } catch (error) {
-      console.error("❌ Error in handleSubmitToken:", error)
+
       this.popupErrorMessage = "An error occurred. Please try again."
     } finally {
       this.isValidating = false
@@ -920,7 +930,7 @@ export default class FileVaultixDownload extends LightningElement {
         }
       })
     } catch (error) {
-      console.error("❌ Error in processToken:", error)
+
       this.isValidating = false
       this.showError(
         "An error occurred while processing your request.",
@@ -1089,7 +1099,7 @@ export default class FileVaultixDownload extends LightningElement {
         this.peer = new Peer(this.peerId, peerConfig)
 
       } catch (e) {
-        console.error("❌ Failed to create PeerJS instance:", e)
+
         throw new Error("Failed to initialize PeerJS. Your browser may not support the required features.")
       }
 
@@ -1101,7 +1111,7 @@ export default class FileVaultixDownload extends LightningElement {
       // Wait for peer to be ready
       return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
-          console.error("❌ PeerJS connection timeout (2 minutes)")
+
           this.isLoading = false
           this.connectionStatus = "disconnected"
           this.showError(
@@ -1141,13 +1151,13 @@ export default class FileVaultixDownload extends LightningElement {
 
         this.peer.on("error", (error) => {
           clearTimeout(timeout)
-          console.error("❌ PeerJS error:", error)
+
           this.handlePeerJSError(error)
           reject(error)
         })
       })
     } catch (error) {
-      console.error("❌ PeerJS initialization error:", error)
+
       this.isLoading = false
       this.connectionStatus = "disconnected"
 
@@ -1180,7 +1190,7 @@ export default class FileVaultixDownload extends LightningElement {
   setupPeerJSHandlers() {
     // Handle disconnection
     this.peer.on("disconnected", () => {
-      console.warn("⚠️ PeerJS disconnected from server")
+      //console.warn("⚠️ PeerJS disconnected from server")
       this.connectionStatus = "disconnected"
       this.showCustomToast("Connection Lost", "Disconnected from PeerJS server", "warning")
     })
@@ -1193,7 +1203,7 @@ export default class FileVaultixDownload extends LightningElement {
 
     // Handle errors
     this.peer.on("error", (error) => {
-      console.error("❌ PeerJS error:", error)
+
       this.handlePeerJSError(error)
     })
   }
@@ -1271,12 +1281,12 @@ export default class FileVaultixDownload extends LightningElement {
 
           }
         } catch (error) {
-          console.error("❌ Error handling broadcast message:", error)
+
         }
       }
 
       this.broadcast.onerror = (error) => {
-        console.error("❌ Broadcast channel error:", error)
+
         this.showCustomToast("Communication Error", "Lost communication with uploader", "warning")
       }
 
@@ -1293,14 +1303,14 @@ export default class FileVaultixDownload extends LightningElement {
         }
       }, 1000)
     } catch (error) {
-      console.error("❌ Failed to create broadcast channel:", error)
+
     }
   }
 
   // Connect to uploader
   connectToUploader(uploaderPeerId) {
     if (!this.peer) {
-      console.error("❌ Cannot connect: peer not available")
+
       return
     }
 
@@ -1310,7 +1320,7 @@ export default class FileVaultixDownload extends LightningElement {
     }
 
     if (!uploaderPeerId) {
-      console.error("❌ Cannot connect: uploader peer ID not available")
+
       this.showError(
         "Cannot find uploader. Please make sure the upload page is open.",
         "connection",
@@ -1330,7 +1340,7 @@ export default class FileVaultixDownload extends LightningElement {
 
       this.setupConnectionHandlers()
     } catch (error) {
-      console.error("❌ Error connecting to uploader:", error)
+
       this.showCustomToast("Connection Error", "Failed to connect to uploader", "error")
     }
   }
@@ -1392,7 +1402,7 @@ export default class FileVaultixDownload extends LightningElement {
     // Handle connection errors
     this.connection.on("error", (error) => {
       clearTimeout(openTimeout);
-      console.error("❌ Data connection error:", error)
+
       this.showError(
         "Data transfer error occurred.",
         "connection",
@@ -1412,7 +1422,7 @@ export default class FileVaultixDownload extends LightningElement {
           this.handleFileChunk(data)
         }
       } catch (error) {
-        console.error("❌ Error processing data:", error)
+
       }
     })
   }
@@ -1426,7 +1436,7 @@ export default class FileVaultixDownload extends LightningElement {
         timestamp: Date.now(),
       })
     } else {
-      console.warn("⚠️ Cannot request file list - connection not ready")
+      //console.warn("⚠️ Cannot request file list - connection not ready")
       // Retry after a delay
       setTimeout(() => {
         this.requestFileList()
@@ -1473,11 +1483,25 @@ export default class FileVaultixDownload extends LightningElement {
         if (this.receivedChunks >= message.totalChunks) {
           this.verifyAndCompleteFile()
         } else {
-          console.warn(
-            `⚠️ File complete signal received but missing chunks: ${this.receivedChunks}/${message.totalChunks}`,
-          )
+          // console.warn(
+          //   `⚠️ File complete signal received but missing chunks: ${this.receivedChunks}/${message.totalChunks}`,
+          // )
         }
         break
+
+      case "uploader_left":
+        this.showCustomToast("Uploader Left", "The uploader has closed their window. File transfer cannot continue.", "error");
+        // Optionally, close the connection and show error UI
+        if (this.connection) this.connection.close();
+        break;
+
+      case "uploader_tab_changed":
+        this.showCustomToast(
+          "Uploader Changed Tab",
+          "The uploader has switched tabs. For better download speed, ask them to keep FileVaultix in the foreground.",
+          "warning"
+        );
+        break;
 
       default:
 
@@ -1829,7 +1853,7 @@ export default class FileVaultixDownload extends LightningElement {
   // ENHANCED: Send chunk acknowledgment with improved duplicate prevention
   sendChunkAcknowledgment(chunkIndex) {
     if (!this.connection || !this.connection.open) {
-      console.warn("⚠️ Cannot send acknowledgment - connection not ready")
+      //console.warn("⚠️ Cannot send acknowledgment - connection not ready")
       return
     }
 
@@ -1860,7 +1884,7 @@ export default class FileVaultixDownload extends LightningElement {
       }
 
     } catch (error) {
-      console.error("❌ Error sending chunk acknowledgment:", error)
+
     }
   }
 
@@ -1890,7 +1914,7 @@ export default class FileVaultixDownload extends LightningElement {
 
     for (let i = 0; i < this.totalChunks; i++) {
       if (!this.fileChunks[i]) {
-        console.warn(`⚠️ Missing chunk ${i + 1}/${this.totalChunks}`)
+        //console.warn(`⚠️ Missing chunk ${i + 1}/${this.totalChunks}`)
         allChunksReceived = false
         break
       }
@@ -1898,7 +1922,7 @@ export default class FileVaultixDownload extends LightningElement {
     }
 
     if (!allChunksReceived) {
-      console.error("❌ File incomplete - missing chunks")
+
       this.showError(
         "File transfer incomplete. Some chunks are missing.",
         "file",
@@ -1911,7 +1935,7 @@ export default class FileVaultixDownload extends LightningElement {
 
     // Verify file size matches expected size
     if (totalSize !== expectedSize) {
-      console.error(`❌ File size mismatch: expected ${expectedSize}, got ${totalSize}`)
+
 
       // Log chunk details for debugging
 
@@ -2065,7 +2089,7 @@ export default class FileVaultixDownload extends LightningElement {
       this.resetFileTransferState()
 
     } catch (error) {
-      console.error("❌ Error completing file download:", error)
+
       this.showError(
         "Failed to complete file download.",
         "file",
@@ -2294,7 +2318,6 @@ export default class FileVaultixDownload extends LightningElement {
   }
 
   // Get browser information
-  // ...existing code...
   getBrowserInfo() {
     const userAgent = navigator.userAgent
     let browserName = "Unknown"
@@ -2354,7 +2377,7 @@ export default class FileVaultixDownload extends LightningElement {
         })
 
       } catch (error) {
-        console.error("❌ Error updating session status:", error)
+
       }
     }
   }
@@ -2498,7 +2521,7 @@ export default class FileVaultixDownload extends LightningElement {
             timestamp: Date.now(),
           })
         } catch (error) {
-          console.warn("⚠️ Heartbeat failed:", error)
+          //console.warn("⚠️ Heartbeat failed:", error)
         }
       }
     }, 30000)

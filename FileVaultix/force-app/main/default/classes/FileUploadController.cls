@@ -1,7 +1,14 @@
 public without sharing class FileUploadController {
 
     @AuraEnabled
-    public static String saveWebRTCSession(String peerId, String token, String password, String sessionJson) {
+    public static String saveWebRTCSession(
+        String peerId, 
+        String token, 
+        String password, 
+        String sessionJson,
+        String fileNames,           // NEW
+        String fileAccessStatus     // NEW
+    ) {
         if (String.isBlank(peerId) || String.isBlank(token) || String.isBlank(sessionJson)) {
             throw new AuraHandledException('peerId, token, and sessionJson are required.');
         }
@@ -11,7 +18,9 @@ public without sharing class FileUploadController {
                 Token__c = token,
                 password__c = password,
                 Session_Status__c = 'In Progress',
-                Session_Data__c = sessionJson
+                Session_Data__c = sessionJson,
+                File_Names__c = fileNames, // NEW
+                File_Access_Status__c = fileAccessStatus // NEW
             );
             insert session;
             return session.Id;
@@ -139,5 +148,25 @@ public without sharing class FileUploadController {
         return token;
     }
 
+    @AuraEnabled
+    public static void updateFileAccessStatus(String recordId, String newStatus) {
+        if (String.isBlank(recordId) || String.isBlank(newStatus)) {
+            return;
+            //throw new AuraHandledException('Both recordId and newStatus are required.');
+        }
+        try {
+            WebRTC_Session__c session = [
+                SELECT Id, File_Access_Status__c
+                FROM WebRTC_Session__c
+                WHERE Id = :recordId AND
+                Session_Status__c != 'Closed'
+                LIMIT 1
+            ];
+            session.File_Access_Status__c = newStatus;
+            update session;
+        } catch (Exception e) {
+            throw new AuraHandledException('Error updating file access status: ' + e.getMessage());
+        }
+    }
 
 }

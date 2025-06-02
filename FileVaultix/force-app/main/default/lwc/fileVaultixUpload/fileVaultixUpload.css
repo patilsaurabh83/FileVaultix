@@ -603,11 +603,11 @@
 }
 
 .file-progress-small {
-  flex: 0 0 auto;
+  flex: 1 0 auto;
   color: var(--primary);
   font-weight: 500;
   font-size: 0.95em;
-  margin-left: var(--space-2);
+  margin-right: var(--space-2);
   min-width: 48px;
   text-align: right;
 }
@@ -1681,6 +1681,10 @@
   
   .file-list-name {
     max-width: 200px;
+  }
+
+  .downlaod-status-text{
+    font-size: 0.875rem;
   }
   
   /* Make password field more compact */
