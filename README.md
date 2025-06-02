@@ -219,15 +219,17 @@ Schedules the `WebRTCCleanupBatch` to run at the **end of every month** automati
 
 ---
 
-## 📄 License
+## 📝 License
 
-This project is licensed under the [MIT License](https://github.com/patilsaurabh83/FileVaultix/blob/main/LICENSE).
+This project is licensed under a **Dual License** model:
 
-### ❗ MIT License Summary
+- **MIT License** – for open-source permissions
+- **Creative Commons Attribution 4.0 (CC BY 4.0)** – for enforcing visible credit
 
-You are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software.
+You must provide visible credit to the author (Saurabh Patil) in any public-facing app or project using this code.  
+Failure to do so may result in revocation of rights or legal action under CC BY 4.0.
 
-However, you must include the original copyright and permission notice.
+[🔗 Full License Terms](./LICENSE)
 
 ---
 
