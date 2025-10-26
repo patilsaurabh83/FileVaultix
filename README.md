@@ -85,15 +85,18 @@ Try FileVaultix live and experience secure peer-to-peer file sharing:
 
 A custom Salesforce object used to temporarily store file-sharing session metadata:
 
-| Field Name          | Type      | Description                            |
-| ------------------- | --------- | -------------------------------------- |
-| `Peer_ID__c`        | Text      | Unique PeerJS ID for sender/receiver   |
-| `Token__c`          | Text      | Secure access token for the session    |
-| `Password__c`       | Text      | (Optional) password for added security |
-| `Session_Status__c` | Picklist  | Status (In Progress, Closed, etc.)     |
-| `Session_Data__c`   | Long Text | Encrypted session metadata (no files)  |
-| `CreatedDate`       | DateTime  | Auto-set when session is created       |
-| `Expires_At__c`     | DateTime  | Timestamp after which session expires  |
+| Field Name              | Type       | Description                                      |
+| ------------------------ | ---------- | ------------------------------------------------ |
+| Peer_ID__c               | Text       | Unique PeerJS ID for sender/receiver             |
+| Token__c                 | Text       | Secure access token for the session              |
+| Password__c              | Text       | (Optional) password for added security           |
+| Session_Status__c        | Picklist   | Status (In Progress, Closed, etc.)               |
+| Session_Data__c          | Long Text  | Encrypted session metadata (no files)            |
+| CreatedDate              | DateTime   | Auto-set when session is created                 |
+| Expires_At__c            | DateTime   | Timestamp after which session expires            |
+| Sender_s_Location__c       | Text(255)  | Geographical location or IP-based region of sender |
+| Receiver_s_Location__c     | Text(255)  | Geographical location or IP-based region of receiver |
+
 
 **Privacy Notice:**
 All session records are temporary and **never** used to store actual files or personal data.
