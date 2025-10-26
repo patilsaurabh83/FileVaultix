@@ -7,7 +7,8 @@ public without sharing class FileUploadController {
         String password, 
         String sessionJson,
         String fileNames,           // NEW
-        String fileAccessStatus     // NEW
+        String fileAccessStatus,     // NEW
+        String senderLocation       // NEW
     ) {
         if (String.isBlank(peerId) || String.isBlank(token) || String.isBlank(sessionJson)) {
             throw new AuraHandledException('peerId, token, and sessionJson are required.');
@@ -20,7 +21,8 @@ public without sharing class FileUploadController {
                 Session_Status__c = 'In Progress',
                 Session_Data__c = sessionJson,
                 File_Names__c = fileNames, // NEW
-                File_Access_Status__c = fileAccessStatus // NEW
+                File_Access_Status__c = fileAccessStatus, // NEW
+                Sender_s_Location__c = senderLocation // NEW
             );
             insert session;
             return session.Id;
@@ -166,6 +168,34 @@ public without sharing class FileUploadController {
             update session;
         } catch (Exception e) {
             throw new AuraHandledException('Error updating file access status: ' + e.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static void updateReceiverLocation(String token, String receiverLocation) {
+        if (String.isBlank(token) || String.isBlank(receiverLocation)) {
+            throw new AuraHandledException('Both token and receiver location are required.');
+        }
+        try {
+            // Query the session record by token
+            List<WebRTC_Session__c> sessions = [
+                SELECT Id, Receiver_s_Location__c
+                FROM WebRTC_Session__c
+                WHERE Token__c = :token
+                AND Session_Status__c != 'Closed'
+                LIMIT 1
+            ];
+
+            if (sessions.isEmpty()) {
+                throw new AuraHandledException('Session not found for token: ' + token);
+            }
+
+            // Update the receiver location
+            WebRTC_Session__c session = sessions[0];
+            session.Receiver_s_Location__c = receiverLocation;
+            update session;
+        } catch (Exception e) {
+            throw new AuraHandledException('Error updating receiver location: ' + e.getMessage());
         }
     }
 
