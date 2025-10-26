@@ -2,6 +2,7 @@ import { LightningElement, track } from "lwc"
 import fileVaultixLogo from "@salesforce/resourceUrl/FileValutixDownload"
 import getWebRTCSession from "@salesforce/apex/FileUploadController.getWebRTCSession"
 import updateSessionStatus from "@salesforce/apex/FileUploadController.updateSessionStatus"
+import updateReceiverLocation from "@salesforce/apex/FileUploadController.updateReceiverLocation";
 
 import ExpressTurn1_Password from '@salesforce/label/c.ExpressTurn1';
 import ExpressTurn2_Password from '@salesforce/label/c.ExpressTurn2_Password';
@@ -179,6 +180,9 @@ export default class FileVaultixDownload extends LightningElement {
 
       this.iceServerList = list;
 
+      // Update the location in Salesforce
+      await this.updateLocation();
+
     } catch (error) {
 
       this.showError(
@@ -254,6 +258,23 @@ export default class FileVaultixDownload extends LightningElement {
       return data.ip || "";
     } catch (e) {
       return "";
+    }
+  }
+
+  async updateLocation() {
+    try {
+      const token = this.token; //`this.token` holds the session token
+      const location = this.location; //`this.location` holds the receiver's location
+
+      if (token && location) {
+        await updateReceiverLocation({ token, receiverLocation: location });
+        //this.showCustomToast("Success", "Receiver location updated successfully.", "success");
+      } else {
+        //this.showCustomToast("Error", "Token or location is missing.", "error");
+      }
+    } catch (error) {
+      //this.showCustomToast("Error", "Failed to update receiver location.", "error");
+      //console.error("Error updating receiver location:", error);
     }
   }
 
