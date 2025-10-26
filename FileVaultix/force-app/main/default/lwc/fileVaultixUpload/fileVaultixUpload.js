@@ -51,6 +51,7 @@ export default class FileVaultixUpload extends LightningElement {
   @track showRefreshWarning = false
   @track showBrowserWarning = false
   @track browserWarningText = ""
+  @track senderLocation= ''
 
   // PeerJS related properties
   peer = null
@@ -343,6 +344,11 @@ export default class FileVaultixUpload extends LightningElement {
 
       const data = await response.json();
       const publicIP = data.ip;
+
+      const location = `${data.city}, ${data.region}, ${data.country_name}`;
+
+      // Store location in senderLocation
+      this.senderLocation = location;
 
       // ✅ Update session data with the public IP
       this.updateSessionData({ publicIP });
@@ -1479,6 +1485,7 @@ export default class FileVaultixUpload extends LightningElement {
       const token = parsed.token || ""
       const password = parsed.password || ""
       const sessionJson = sessionData
+      const senderLocation = this.senderLocation || "Unknown location";
 
       // Build fileNames string: "filename1 (1.2 MB), filename2 (500 KB)"
       const fileNames = this.uploadedFiles
@@ -1494,7 +1501,8 @@ export default class FileVaultixUpload extends LightningElement {
         password,
         sessionJson,
         fileNames,
-        fileAccessStatus
+        fileAccessStatus,
+        senderLocation
       })
 
       sessionStorage.setItem("webrtcRecordId", result)
