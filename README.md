@@ -103,6 +103,28 @@ All session records are temporary and **never** used to store actual files or pe
 
 ---
 
+## 🔗 Branded Short URLs (Short.io Integration - 2026)
+
+The **Upload Page** now features an enhanced sharing interface that presents both a **Branded Short URL** and the **Original Long URL**. This dual-link approach improves user trust by providing transparency while offering the convenience of a professional, shortened link.
+
+### 🛠️ Implementation (Apex & Custom Labels)
+
+To maintain security and clean code, we use **Salesforce Custom Labels** to store the domain name. This ensures that sensitive environment-specific URLs are not hardcoded in the Apex class.
+
+```apex
+// Secure implementation in FileUploadController.cls
+Map<String, Object> body = new Map<String, Object>();
+body.put('originalURL', longUrl);
+
+// WITH: Secure System Label for privacy and flexibility
+body.put('domain', System.Label.ShortIO_Domain); 
+
+// Link remains active for 4 hours (User Security)
+body.put('expiresAt', System.now().addHours(4).formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\''));
+
+// Auto-delete from dashboard after 7 days (Quota Management)
+body.put('ttl', System.now().addDays(7).formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\''));
+```
 ---
 
 ## 🧹 Automated Cleanup: WebRTC Session Maintenance
