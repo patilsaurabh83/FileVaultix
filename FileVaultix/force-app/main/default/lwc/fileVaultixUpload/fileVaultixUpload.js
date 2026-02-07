@@ -4,6 +4,7 @@ import saveWebRTCSession from "@salesforce/apex/FileUploadController.saveWebRTCS
 import checkAndGenerateUniqueToken from "@salesforce/apex/FileUploadController.generateUniqueToken"
 import updateSessionStatus from "@salesforce/apex/FileUploadController.updateSessionStatus"
 import updateFileAccessStatus from '@salesforce/apex/FileUploadController.updateFileAccessStatus';
+import getShortUrl from "@salesforce/apex/FileUploadController.getShortUrl"
 
 import ExpressTurn1_Password from '@salesforce/label/c.ExpressTurn1';
 import ExpressTurn2_Password from '@salesforce/label/c.ExpressTurn2_Password';
@@ -52,6 +53,8 @@ export default class FileVaultixUpload extends LightningElement {
   @track showBrowserWarning = false
   @track browserWarningText = ""
   @track senderLocation= ''
+  @track shortUrl = ""
+  @track isShortUrlCopied = false
 
   // PeerJS related properties
   peer = null
@@ -409,6 +412,8 @@ export default class FileVaultixUpload extends LightningElement {
     this.transferStatusOverride = ""
     this.showBrowserWarning = false
     this.browserWarningText = ""
+    this.shortUrl = ""
+    this.isShortUrlCopied = false
 
     if (clearFiles) {
       this.fileUrl = ""
@@ -1450,6 +1455,14 @@ export default class FileVaultixUpload extends LightningElement {
       this.fileUrl = fileUrl
       this.qrCodeUrl = qrCodeUrl
 
+      try {
+        const shortUrlResult = await getShortUrl({ longUrl: this.fileUrl })
+        if (shortUrlResult && shortUrlResult !== this.fileUrl) {
+          this.shortUrl = shortUrlResult
+        }
+      } catch (shortUrlError) {
+      }
+
       const expiresAt = new Date()
       expiresAt.setHours(expiresAt.getHours() + 4)
 
@@ -1784,6 +1797,21 @@ export default class FileVaultixUpload extends LightningElement {
     return window.innerWidth < 768
       ? 'Enter a passkey for files'
       : 'Enter a password to protect your files';
+  }
+
+  // Copy short URL to clipboard with visual feedback
+  copyShortUrl() {
+    if (this.shortUrl) {
+      navigator.clipboard.writeText(this.shortUrl).then(() => {
+        this.isShortUrlCopied = true
+        this.copiedField = "shortUrl"
+        setTimeout(() => {
+          this.isShortUrlCopied = false
+          this.copiedField = ""
+        }, 2000)
+        this.showCustomToast("Success", "Short URL copied to clipboard!", "success")
+      })
+    }
   }
 
 }
