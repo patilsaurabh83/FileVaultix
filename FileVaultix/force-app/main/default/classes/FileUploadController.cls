@@ -199,4 +199,41 @@ public without sharing class FileUploadController {
         }
     }
 
+    @AuraEnabled
+    public static String getShortUrl(String longUrl) {
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint('callout:ShortIO/links'); 
+        req.setMethod('POST');
+        req.setHeader('Content-Type', 'application/json');
+        req.setHeader('accept', 'application/json');
+
+        Map<String, Object> body = new Map<String, Object>();
+        body.put('originalURL', longUrl);
+        body.put('domain', 'FileValutix.short.gy'); 
+        // Permanently delete from quota in 7 days (the minimum allowed)
+        DateTime deleteTime = System.now().addDays(8); 
+        body.put('ttl', deleteTime.formatGmt('yyyy-MM-dd\'T\'HH:mm:ss\'Z\''));
+
+        req.setBody(JSON.serialize(body));
+
+        Http http = new Http();
+        try {
+            HttpResponse res = http.send(req);
+            
+            // If it's 200/201, return the short link
+            if (res.getStatusCode() == 200 || res.getStatusCode() == 201) {
+                Map<String, Object> responseMap = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
+                return (String) responseMap.get('shortURL');
+            } 
+            
+            // IF IT FAILS: We throw a custom error with the status and body
+            // This will be caught by your LWC's .catch() block
+            throw new AuraHandledException('Short.io API Error: ' + res.getStatusCode() + ' - ' + res.getBody());
+            
+        } catch (Exception e) {
+            // This catches things like timeouts or permissions issues
+            throw new AuraHandledException('Apex Callout Exception: ' + e.getMessage());
+        }
+    }
+
 }
